@@ -13,6 +13,9 @@ import tempfile
 
 class FileHandlerHandler(FileHandler.Iface):
   def processFile(self, file):
+
+    with open('../data/' + str(file.filename), 'a', encoding='utf-8') as ffw:
+        ffw.write(file.data.decode('utf-8'))
     # Save the incoming file to a temporary file
     with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
       tmp_file.write(file.data)
@@ -23,17 +26,26 @@ class FileHandlerHandler(FileHandler.Iface):
       # output_file = process_file(tmp_file.name)
     output_file = tmp_file.name
     print('writed file success!')
+
+    output_file = file.filename
+    output_file = process_file(output_file)
       # Read the output file and return its contents
-    with open(output_file, 'rb') as f:
+    with open('../data/' + output_file, 'rb') as f:
       output_data = f.read()
       # Create and return a new FileData object with the output data
-    output_file = file.filename
+    print("Type: %s" % type(output_data))
     return FileData(filename=os.path.basename(output_file), data=output_data)
 
 def process_file(filename):
   # Use a script or function to process the file
   # Here we just create a new file with the same name and add a suffix
   # TODO write business logic
+  with open('../data/' + filename, 'ab') as f:
+    f.write(b'def')
+  print(type(filename))
+  return filename
+
+  '''
   output_file = filename + '.processed'
   with open(output_file, 'a', encoding='utf-8') as f:
     f.write('Processed file: ' + filename)
@@ -41,6 +53,7 @@ def process_file(filename):
     fr.read()
   print('writing file...')
   return output_file
+  '''
 
 if __name__ == "__main__":
     handler = FileHandlerHandler()
